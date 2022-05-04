@@ -1,9 +1,11 @@
-import React from "react";
-import { Row, Col, Container, Card } from "react-bootstrap";
+import React from 'react'
+import { Row, Col, Container, Card, Button } from 'react-bootstrap'
 
-import data from "meta.json";
+import data from 'meta.json'
 
 export const Cards: React.FC = () => {
+  const user = localStorage.getItem('user')
+
   return (
     <Container className="my-5 flex-grow-1">
       <Row>
@@ -17,7 +19,18 @@ export const Cards: React.FC = () => {
             </Card>
           </Col>
         ))}
+        {user && (
+          <Button
+            onClick={() => {
+              localStorage.clear()
+              window.location.reload()
+            }}
+            variant="primary"
+          >
+            Logout
+          </Button>
+        )}
       </Row>
     </Container>
-  );
-};
+  )
+}

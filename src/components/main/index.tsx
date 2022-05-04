@@ -1,25 +1,78 @@
-import React, { CSSProperties } from "react";
-import { Container } from "react-bootstrap";
+import App from 'App'
+import { Header } from 'components/header'
+import { Navigate, Route, Routes, useLocation } from 'react-router'
+import { BrowserRouter } from 'react-router-dom'
+import { LoginContent } from './LoginContent'
+import {
+  MoviesContent,
+  MoviesListContent,
+  ReviewMoviesContent,
+} from './MoviesContent'
 
-import { Button } from "components";
-
-export const Main: React.FC = () => {
+export const Main = ({}) => {
   return (
-    <div className="text-center py-4" style={{ backgroundColor: "#282c34" }}>
-      <Container>
-        <h1 className="display-2 text-white">superplate</h1>
-        <p className="lead text-white">
-          The frontend boilerplate with superpowers!
-        </p>
-        <Button
-          variant="primary"
-          size="lg"
-          href="https://pankod.github.io/superplate/"
-          target="_blank"
-        >
-          Docs
-        </Button>
-      </Container>
-    </div>
-  );
-};
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <GoHome>
+              <LoginContent />
+            </GoHome>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <RequireAuth>
+              <MoviesListContent />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/movies/:id"
+          element={
+            <RequireAuth>
+              <MoviesContent />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/movies/:id/add-review"
+          element={
+            <RequireAuth>
+              <ReviewMoviesContent />
+            </RequireAuth>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  )
+}
+
+function RequireAuth({ children }: { children: JSX.Element }) {
+  let location = useLocation()
+  const user = localStorage.getItem('user')
+
+  return user ? (
+    <>
+      <Header />
+      {children}
+    </>
+  ) : (
+    <Navigate to="/login" state={{ from: location }} replace />
+  )
+}
+function GoHome({ children }: { children: JSX.Element }) {
+  let location = useLocation()
+  const user = localStorage.getItem('user')
+
+  return !user ? (
+    <>
+      <Header />
+      {children}
+    </>
+  ) : (
+    <Navigate to="/" state={{ from: location }} replace />
+  )
+}
